@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>15 Minute Sync Timer</title>
+<style>
+  body {
+    background-color: #000;
+    color: #ccc;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+  }
+  #timer {
+    font-size: 8vw;
+    text-align: center;
+  }
+  #controls {
+    margin-top: 20px;
+  }
+  button {
+    background-color: #222;
+    color: #ccc;
+    border: 1px solid #555;
+    padding: 10px 20px;
+    font-size: 1.2em;
+    cursor: pointer;
+  }
+  button:hover {
+    background-color: #333;
+  }
+</style>
+</head>
+<body>
+
+<div id="timer">00:00</div>
+<div id="controls">
+  <button id="muteButton">Mute</button>
+</div>
+
+<audio id="chimeSound" src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg"></audio>
+
+<script>
+let muted = false;
+const timerDisplay = document.getElementById('timer');
+const muteButton = document.getElementById('muteButton');
+const chimeSound = document.getElementById('chimeSound');
+
+muteButton.addEventListener('click', () => {
+  muted = !muted;
+  muteButton.textContent = muted ? 'Unmute' : 'Mute';
+});
+
+function updateTimer() {
+  const now = new Date();
+  const minutes = now.getMinutes();
+  const seconds = now.getSeconds();
+  const milliseconds = now.getMilliseconds();
+
+  // Calculate time left to next 15-min mark
+  const nextQuarter = Math.ceil(minutes / 15) * 15;
+  const diffMinutes = (nextQuarter === 60 ? 0 : nextQuarter) - minutes;
+  const diffSeconds = 60 - seconds;
+
+  let totalSecondsLeft = diffMinutes * 60 + diffSeconds;
+
+  if (nextQuarter === 60 && minutes !== 0) {
+    totalSecondsLeft += 3600; // Add an hour rollover if we're past :45
+  }
+
+  const displayMinutes = Math.floor(totalSecondsLeft / 60) % 60;
+  const displaySeconds = totalSecondsLeft % 60;
+
+  timerDisplay.textContent = 
+    String(displayMinutes).padStart(2, '0') + ':' + 
+    String(displaySeconds).padStart(2, '0');
+
+  // Play chime exactly when hitting 00:00
+  if (displayMinutes === 0 && displaySeconds === 0 && !muted) {
+    chimeSound.play().catch(e => console.log('Chime muted or blocked.'));
+  }
+}
+
+// Update every 200ms for smoother sync
+setInterval(updateTimer, 200);
+</script>
+
+</body>
+</html>
