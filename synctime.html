@@ -80,8 +80,6 @@ testChimeButton.addEventListener('click', () => {
   }
 });
 
-let lastChimeTime = 0;
-
 function playChime() {
   if (!muted) {
     chimeSound.pause();
@@ -105,9 +103,8 @@ function updateTimer() {
     String(displayMinutes).padStart(2, '0') + ':' + 
     String(displaySeconds).padStart(2, '0');
 
-  if ((seconds % 10 === 0 || seconds % 10 === 1) && now - lastChimeTime > 1000) {
+  if (displayMinutes === 0 && displaySeconds === 0 && milliseconds < 200) {
     playChime();
-    lastChimeTime = now;
   }
 }
 
