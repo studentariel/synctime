@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>30 Second Sync Timer</title>
+<title>10 Second Sync Timer</title>
 <style>
   body {
     background-color: #000;
@@ -53,7 +53,7 @@
   <button id="testChimeButton">Test Chime</button>
 </div>
 
-<audio id="chimeSound" src="https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg"></audio>
+<audio id="chimeSound" src="https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg"></audio>
 
 <script>
 let muted = false;
@@ -74,20 +74,24 @@ sizeSlider.addEventListener('input', () => {
 
 testChimeButton.addEventListener('click', () => {
   if (!muted) {
-    chimeSound.currentTime = 0;
-    chimeSound.play().catch(e => console.log('Chime muted or blocked.'));
-    setTimeout(() => {
-      chimeSound.pause();
-      chimeSound.currentTime = 0;
-    }, 1000); // Stop after 1 second
+    playChime();
   }
 });
+
+function playChime() {
+  chimeSound.currentTime = 0;
+  chimeSound.play().catch(e => console.log('Chime muted or blocked.'));
+  setTimeout(() => {
+    chimeSound.pause();
+    chimeSound.currentTime = 0;
+  }, 2500); // Stop after 2.5 seconds
+}
 
 function updateTimer() {
   const now = new Date();
   const seconds = now.getSeconds();
 
-  const nextMark = (seconds < 30) ? 30 : 60;
+  const nextMark = (seconds < 10) ? 10 : (seconds < 20) ? 20 : (seconds < 30) ? 30 : (seconds < 40) ? 40 : (seconds < 50) ? 50 : 60;
   const diffSeconds = nextMark - seconds;
 
   const displayMinutes = Math.floor(diffSeconds / 60);
@@ -98,12 +102,7 @@ function updateTimer() {
     String(displaySeconds).padStart(2, '0');
 
   if (displayMinutes === 0 && displaySeconds === 0 && !muted) {
-    chimeSound.currentTime = 0;
-    chimeSound.play().catch(e => console.log('Chime muted or blocked.'));
-    setTimeout(() => {
-      chimeSound.pause();
-      chimeSound.currentTime = 0;
-    }, 1000); // Stop after 1 second
+    playChime();
   }
 }
 
