@@ -53,7 +53,7 @@
   <button id="testChimeButton">Test Chime</button>
 </div>
 
-<audio id="chimeSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_1cc1c5d7c2.mp3?filename=success-1-6297.mp3"></audio>
+<audio id="chimeSound" src="chime.mp3"></audio>
 
 <script>
 let muted = false;
@@ -74,15 +74,17 @@ sizeSlider.addEventListener('input', () => {
 
 testChimeButton.addEventListener('click', () => {
   if (!muted) {
+    chimeSound.pause();
     chimeSound.currentTime = 0;
     chimeSound.play().catch(e => console.log('Chime muted or blocked.'));
   }
 });
 
-let lastChimeSecond = -1;
+let lastChimeTime = 0;
 
 function playChime() {
   if (!muted) {
+    chimeSound.pause();
     chimeSound.currentTime = 0;
     chimeSound.play().catch(e => console.log('Chime muted or blocked.'));
   }
@@ -103,9 +105,9 @@ function updateTimer() {
     String(displayMinutes).padStart(2, '0') + ':' + 
     String(displaySeconds).padStart(2, '0');
 
-  if ((seconds % 10 === 0 || seconds % 10 === 1) && lastChimeSecond !== seconds) {
+  if ((seconds % 10 === 0 || seconds % 10 === 1) && now - lastChimeTime > 1000) {
     playChime();
-    lastChimeSecond = seconds;
+    lastChimeTime = now;
   }
 }
 
