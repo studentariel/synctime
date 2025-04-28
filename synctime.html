@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>11 Second Sync Timer</title>
+<title>10 Second Sync Timer</title>
 <style>
   body {
     background-color: #000;
@@ -87,17 +87,17 @@ function updateTimer() {
   const now = new Date();
   const seconds = now.getSeconds();
 
-  const nextMark = (Math.floor(seconds / 10) + 1) * 10;
-  const diffSeconds = (nextMark === 60 ? 0 : nextMark) - seconds;
+  const secondsSinceLastMark = seconds % 10;
+  const secondsToNextMark = (10 - secondsSinceLastMark) % 10;
 
-  const displayMinutes = Math.floor(diffSeconds / 60);
-  const displaySeconds = diffSeconds % 60;
+  const displayMinutes = Math.floor(secondsToNextMark / 60);
+  const displaySeconds = secondsToNextMark % 60;
 
   timerDisplay.textContent = 
     String(displayMinutes).padStart(2, '0') + ':' + 
     String(displaySeconds).padStart(2, '0');
 
-  if (diffSeconds === 0) {
+  if (secondsSinceLastMark === 0 && now.getMilliseconds() < 200) {
     playChime();
   }
 }
