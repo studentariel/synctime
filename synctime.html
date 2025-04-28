@@ -53,7 +53,7 @@
   <button id="testChimeButton">Test Chime</button>
 </div>
 
-<audio id="chimeSound" src="https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg"></audio>
+<audio id="chimeSound" src="https://actions.google.com/sounds/v1/alarms/soft_bell_ring.ogg"></audio>
 
 <script>
 let muted = false;
@@ -79,12 +79,9 @@ testChimeButton.addEventListener('click', () => {
 });
 
 function playChime() {
+  chimeSound.pause();
   chimeSound.currentTime = 0;
   chimeSound.play().catch(e => console.log('Chime muted or blocked.'));
-  setTimeout(() => {
-    chimeSound.pause();
-    chimeSound.currentTime = 0;
-  }, 2500); // Stop after 2.5 seconds
 }
 
 function updateTimer() {
@@ -100,13 +97,17 @@ function updateTimer() {
   timerDisplay.textContent = 
     String(displayMinutes).padStart(2, '0') + ':' + 
     String(displaySeconds).padStart(2, '0');
-
-  if (displayMinutes === 0 && displaySeconds === 0 && !muted) {
-    playChime();
-  }
 }
 
-setInterval(updateTimer, 200);
+setInterval(() => {
+  const now = new Date();
+  const seconds = now.getSeconds();
+  updateTimer();
+
+  if ((seconds % 10 === 0) && !muted) {
+    playChime();
+  }
+}, 200);
 </script>
 
 </body>
