@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>10 Second Sync Timer</title>
+<title>11 Second Sync Timer</title>
 <style>
   body {
     background-color: #000;
@@ -53,7 +53,7 @@
   <button id="testChimeButton">Test Chime</button>
 </div>
 
-<audio id="chimeSound" src="https://actions.google.com/sounds/v1/alarms/soft_bell_ring.ogg"></audio>
+<audio id="chimeSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_1cc1c5d7c2.mp3?filename=success-1-6297.mp3"></audio>
 
 <script>
 let muted = false;
@@ -73,12 +73,11 @@ sizeSlider.addEventListener('input', () => {
 });
 
 testChimeButton.addEventListener('click', () => {
-  if (!muted) {
-    playChime();
-  }
+  playChime();
 });
 
 function playChime() {
+  if (muted) return;
   chimeSound.pause();
   chimeSound.currentTime = 0;
   chimeSound.play().catch(e => console.log('Chime muted or blocked.'));
@@ -88,8 +87,8 @@ function updateTimer() {
   const now = new Date();
   const seconds = now.getSeconds();
 
-  const nextMark = (seconds < 10) ? 10 : (seconds < 20) ? 20 : (seconds < 30) ? 30 : (seconds < 40) ? 40 : (seconds < 50) ? 50 : 60;
-  const diffSeconds = nextMark - seconds;
+  const nextMark = (Math.floor(seconds / 10) + 1) * 10;
+  const diffSeconds = (nextMark === 60 ? 0 : nextMark) - seconds;
 
   const displayMinutes = Math.floor(diffSeconds / 60);
   const displaySeconds = diffSeconds % 60;
@@ -97,17 +96,13 @@ function updateTimer() {
   timerDisplay.textContent = 
     String(displayMinutes).padStart(2, '0') + ':' + 
     String(displaySeconds).padStart(2, '0');
-}
 
-setInterval(() => {
-  const now = new Date();
-  const seconds = now.getSeconds();
-  updateTimer();
-
-  if ((seconds % 10 === 0) && !muted) {
+  if (diffSeconds === 0) {
     playChime();
   }
-}, 200);
+}
+
+setInterval(updateTimer, 200);
 </script>
 
 </body>
